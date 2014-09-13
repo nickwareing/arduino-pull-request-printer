@@ -2,7 +2,7 @@ from time import sleep
 import requests
 import json
 import argparse
-import ConfigParser
+import configparser
 
 # GitHub
 headers = {'Authorization': ''}
@@ -10,7 +10,7 @@ baseUrl = ''
 owner = ''
 
 # Arduino
-url = 'http://10.1.1.11'
+url = 'http://172.19.106.227'
 
 # TeamX Devs
 teamXdevs = {
@@ -34,7 +34,7 @@ def post_to_printer(pr, repo):
     #print json.dumps(pr, indent=4, sort_keys=True)
     r = requests.get(url + '?p=' + message)
     print(r.status_code)
-
+    sleep(1)
 
 def post_new_line():
     r = requests.get(url + '?p= ')
@@ -42,7 +42,7 @@ def post_new_line():
 
 
 def parse_and_print(PRs, latest):
-    temp_num = None
+    temp_num = 0
     for PR in PRs:
         user = PR['head']['user']['login']
         number = PR['number']
@@ -78,7 +78,7 @@ def poll(repos):
 
 if __name__ == "__main__":
     # Read values from config file
-    Config = ConfigParser.ConfigParser()
+    Config = configparser.ConfigParser();
     Config.read("config.ini")
     section = 'GitHub'
     try:

@@ -11,9 +11,9 @@ Adafruit_Thermal printer(printer_RX_Pin, printer_TX_Pin);
 ////////////////////////////////////////////////////////////////////////
 //CONFIGURE
 //////////////f//////////////////////////////////////////////////////////
-  //byte ip[] = { 192, 168, 0, 1 };   //Manual setup only
-  //byte gateway[] = { 192, 168, 0, 1 }; //Manual setup only
-  //byte subnet[] = { 255, 255, 255, 0 }; //Manual setup only
+  //byte ip[] = { 172, 19, 106, 227 };   //Manual setup only
+  //byte gateway[] = { 172, 19, 106, 1 }; //Manual setup only
+  //byte subnet[] = { 255, 255, 254, 0 }; //Manual setup only
 
   byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 
@@ -72,10 +72,11 @@ void checkForClient(){
       }
     }
     
-    String parsedStr = parseParameters(myStr);
-    printString(parsedStr);
-    sendResponse(parsedStr);
-    delay(100); // give the web browser time to receive the data
+    myStr = parseParameters(myStr);
+    printString(myStr);
+    delay(500);
+    sendResponse();
+    delay(500); // give the web browser time to receive the data
     client.stop(); // close the connection:    
   } 
 }
@@ -83,42 +84,30 @@ void checkForClient(){
 String parseParameters(String str) {
   int startIndex = str.indexOf("p");
   int endIndex = str.length();
-  String rawStr = str.substring(startIndex + 2, endIndex);
-  
-  // Copy string
-  String decodedStr = rawStr;
-
-  // Decode space characters
-  decodedStr.replace("%20", " ");
-  return decodedStr;
+  str.replace("%20", " ");
+  return str.substring(startIndex + 2, endIndex);
 }
 
 void printString(String str) {
-  // Currently only supports one bold substring.
+  //Currently only supports one bold substring.
   int startBold = str.indexOf("**") + 2;
   int endBold;
   if (startBold != -1) {
     endBold = str.indexOf("**", startBold);
-    String boldStr = str.substring(startBold, endBold);
-    str = str.substring(endBold + 2, str.length());
     printer.boldOn();
-    printer.println(boldStr);
+    printer.println(str.substring(startBold, endBold));
     printer.boldOff();
   }
   
-  printer.println(str);
+  printer.println(str.substring(endBold + 2, str.length()));
   printer.feed(1);
 }
 
-void sendResponse(String str) {
+void sendResponse() {
   client.println("HTTP/1.1 200 OK");
   client.println("Content-Type: text/html");
   // the connection will be closed after completion of the response
   client.println("Connection: close");
   client.println();
-  client.println("<!DOCTYPE HTML>");
-  client.println("<html>");
-  // output the value of each analog input pin
-  client.println("<h1>Printing: " + str + "</h1>");
-  client.println("</html>");
 }
+
