@@ -12,17 +12,8 @@ owner = ''
 # Arduino
 url = 'http://172.19.106.227'
 
-# TeamX Devs
-teamXdevs = {
-    'dev-joem': 'Joe',
-    'dev-mingl': 'Ming',
-    'dev-elisac': 'Elisa',
-    'dev-markc': 'Mark',
-    'dev-dano': 'Dan',
-    'dev-fayp': 'Fay',
-    'dev-jamesm': 'James',
-    'dev-regang': 'Regan'
-}
+# Team Devs
+teamDevs = {}
 
 latestPR = {}
 
@@ -47,7 +38,7 @@ def parse_and_print(PRs, latest):
         user = PR['head']['user']['login']
         number = PR['number']
         repo = PR['head']['repo']['name']
-        if user in teamXdevs and number > latest:
+        if user in teamDevs and number > latest:
             post_to_printer(PR, repo)
             temp_num = max(number, temp_num)
     if temp_num:
